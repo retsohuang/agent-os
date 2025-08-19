@@ -18,14 +18,16 @@ ELSE:
 - Maintain consistent indentation throughout files
 - Align nested structures for readability
 
+**Note**: If the project uses Prettier or ESLint, follow their configured rules instead of these defaults
+
 ### Naming Conventions
-- **Methods and Variables**: Use snake_case (e.g., `user_profile`, `calculate_total`)
-- **Classes and Modules**: Use PascalCase (e.g., `UserProfile`, `PaymentProcessor`)
+- **Methods and Variables**: Use camelCase (e.g., `userProfile`, `calculateTotal`)
+- **React Components**: Use PascalCase (e.g., `UserProfile`, `PaymentProcessor`)
 - **Constants**: Use UPPER_SNAKE_CASE (e.g., `MAX_RETRY_COUNT`)
 
+**Note**: If the project's framework or programming language has strict naming requirements (e.g., React Hooks must start with `use`), follow those framework-specific rules instead.
+
 ### String Formatting
-- Use single quotes for strings: `'Hello World'`
-- Use double quotes only when interpolation is needed
 - Use template literals for multi-line strings or complex interpolation
 
 ### Code Comments
@@ -51,27 +53,27 @@ IF current task involves writing or updating HTML, CSS, or TailwindCSS:
         PROCESS: Returned style rules
       ELSE:
         READ the following style guides (only if not already in context):
-        - @.agent-os/standards/code-style/html-style.md (if not in context)
-        - @.agent-os/standards/code-style/css-style.md (if not in context)
+        - @~/.agent-os/standards/code-style/html-style.md (if not in context)
+        - @~/.agent-os/standards/code-style/css-style.md (if not in context)
     </context_fetcher_strategy>
 ELSE:
   SKIP: HTML/CSS style guides not relevant to current task
 </conditional-block>
 
-<conditional-block task-condition="javascript" context-check="javascript-style">
-IF current task involves writing or updating JavaScript:
+<conditional-block task-condition="javascript-typescript" context-check="javascript-typescript-style">
+IF current task involves writing or updating JavaScript or TypeScript:
   IF javascript-style.md already in context:
     SKIP: Re-reading this file
-    NOTE: "Using JavaScript style guide already in context"
+    NOTE: "Using JavaScript/TypeScript style guide already in context"
   ELSE:
     <context_fetcher_strategy>
       IF current agent is Claude Code AND context-fetcher agent exists:
         USE: @agent:context-fetcher
-        REQUEST: "Get JavaScript style rules from code-style/javascript-style.md"
+        REQUEST: "Get JavaScript/TypeScript style rules from code-style/javascript-style.md"
         PROCESS: Returned style rules
       ELSE:
-        READ: @.agent-os/standards/code-style/javascript-style.md
+        READ: @~/.agent-os/standards/code-style/javascript-style.md
     </context_fetcher_strategy>
 ELSE:
-  SKIP: JavaScript style guide not relevant to current task
+  SKIP: JavaScript/TypeScript style guide not relevant to current task
 </conditional-block>

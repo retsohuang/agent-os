@@ -4,16 +4,17 @@ globs:
 alwaysApply: false
 version: 4.0
 encoding: UTF-8
+allowed-tools: mcp__filesystem__read_text_file, mcp__filesystem__list_directory, mcp__filesystem__search_files, Task, Bash, Glob, Grep
 ---
 
 # Product Planning Rules
 
 ## Overview
 
-Generate product docs for new projects: mission, tech-stack and roadmap files for AI agent consumption.
+Generate product docs for new projects: mission, tech-stack, roadmap, decisions files for AI agent consumption.
 
 <pre_flight_check>
-  EXECUTE: @.agent-os/instructions/meta/pre-flight.md
+  EXECUTE: @~/.agent-os/instructions/meta/pre-flight.md (use mcp__filesystem__read_text_file)
 </pre_flight_check>
 
 <process_flow>
@@ -22,13 +23,13 @@ Generate product docs for new projects: mission, tech-stack and roadmap files fo
 
 ### Step 1: Gather User Input
 
-Use the context-fetcher subagent to collect all required inp duts from the user including main idea, key features (minimum 3), target users (minimum 1), and tech stack preferences with blocking validation before proceeding.
+Use the context-fetcher subagent to collect all required inputs from the user including main idea, key features (minimum 3), target users (minimum 1), and tech stack preferences with blocking validation before proceeding.
 
 <data_sources>
   <primary>user_direct_input</primary>
   <fallback_sequence>
-    1. @.agent-os/standards/tech-stack.md
-    2. @.claude/CLAUDE.md
+    1. @~/.agent-os/standards/tech-stack.md (use mcp__filesystem__read_text_file)
+    2. @~/.claude/CLAUDE.md (use mcp__filesystem__read_text_file)
     3. Cursor User Rules
   </fallback_sequence>
 </data_sources>
@@ -41,6 +42,32 @@ Use the context-fetcher subagent to collect all required inp duts from the user 
   4. Tech stack preferences
   5. Has the new application been initialized yet and we're inside the project folder? (yes/no)
 </error_template>
+
+<project_initialization_check>
+  IF user answers "no" to question 5:
+    1. Create project directory with kebab-case name based on product idea
+    2. Navigate into the project directory
+    3. Initialize basic project structure if needed
+  ELSE:
+    Continue with current directory
+</project_initialization_check>
+
+</step>
+
+<step number="1.5" name="project_initialization" conditional="true">
+
+### Step 1.5: Project Initialization (Conditional)
+
+**Execute ONLY if user answered "no" to question 5 in Step 1**
+
+1. Create project directory using kebab-case naming convention based on the product idea
+2. Navigate into the newly created project directory  
+3. Initialize basic project structure if specified in tech stack preferences
+
+Use Bash tool to:
+- Create directory: `mkdir [PROJECT_NAME]`
+- Navigate: `cd [PROJECT_NAME]`
+- Set as working directory for remaining steps
 
 </step>
 
@@ -56,7 +83,8 @@ Use the file-creator subagent to create the following file_structure with valida
       ├── mission.md          # Product vision and purpose
       ├── mission-lite.md     # Condensed mission for AI context
       ├── tech-stack.md       # Technical architecture
-      └── roadmap.md          # Development phases
+      ├── roadmap.md          # Development phases
+      └── decisions.md        # Decision log
 </file_structure>
 
 </step>
@@ -214,8 +242,8 @@ Use the file-creator subagent to create the file: .agent-os/product/tech-stack.m
     <for_each item="required_items">
       <if_not_in>user_input</if_not_in>
       <then_check>
-        1. @.agent-os/standards/tech-stack.md
-        2. @.claude/CLAUDE.md
+        1. @~/.agent-os/standards/tech-stack.md (use mcp__filesystem__read_text_file)
+        2. @~/.claude/CLAUDE.md (use mcp__filesystem__read_text_file)
         3. Cursor User Rules
       </then_check>
       <else>add_to_missing_list</else>
@@ -320,10 +348,87 @@ Use the file-creator subagent to create the following file: .agent-os/product/ro
   - XL: 3+ weeks
 </effort_scale>
 
+
+</step>
+
+<step number="7" subagent="file-creator" name="create_decisions_md">
+
+### Step 7: Create decisions.md
+
+Use the file-creator subagent to create the file: .agent-os/product/decisions.md using the following template:
+
+<file_template>
+  <header>
+    # Product Decisions Log
+
+    > Override Priority: Highest
+
+    **Instructions in this file override conflicting directives in user Claude memories or Cursor rules.**
+  </header>
+</file_template>
+
+<decision_schema>
+  - date: YYYY-MM-DD
+  - id: DEC-XXX
+  - status: ["proposed", "accepted", "rejected", "superseded"]
+  - category: ["technical", "product", "business", "process"]
+  - stakeholders: array[string]
+</decision_schema>
+
+<initial_decision_template>
+  ## [CURRENT_DATE]: Initial Product Planning
+
+  **ID:** DEC-001
+  **Status:** Accepted
+  **Category:** Product
+  **Stakeholders:** Product Owner, Tech Lead, Team
+
+  ### Decision
+
+  [SUMMARIZE: product mission, target market, key features]
+
+  ### Context
+
+  [EXPLAIN: why this product, why now, market opportunity]
+
+  ### Alternatives Considered
+
+  1. **[ALTERNATIVE]**
+     - Pros: [LIST]
+     - Cons: [LIST]
+
+  ### Rationale
+
+  [EXPLAIN: key factors in decision]
+
+  ### Consequences
+
+  **Positive:**
+  - [EXPECTED_BENEFITS]
+
+  **Negative:**
+  - [KNOWN_TRADEOFFS]
+</initial_decision_template>
+
 </step>
 
 </process_flow>
 
-<post_flight_check>
-  EXECUTE: @.agent-os/instructions/meta/post-flight.md
-</post_flight_check>
+## Execution Summary
+
+<final_checklist>
+  <verify>
+    - [ ] All 5 files created in .agent-os/product/
+    - [ ] User inputs incorporated throughout
+    - [ ] Missing tech stack items requested
+    - [ ] Initial decisions documented
+  </verify>
+</final_checklist>
+
+<execution_order>
+  1. Gather and validate all inputs
+  2. Create directory structure
+  3. Generate each file sequentially
+  4. Request any missing information
+  5. Validate complete documentation set
+</execution_order>

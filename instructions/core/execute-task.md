@@ -4,6 +4,7 @@ globs:
 alwaysApply: false
 version: 1.0
 encoding: UTF-8
+allowed-tools: mcp__filesystem__read_text_file, mcp__filesystem__write_file, mcp__filesystem__edit_file, mcp__filesystem__list_directory, mcp__filesystem__search_files, Task, Bash, Glob, Grep
 ---
 
 # Task Execution Rules
@@ -13,39 +14,99 @@ encoding: UTF-8
 Execute a specific task along with its sub-tasks systematically following a TDD development workflow.
 
 <pre_flight_check>
-  EXECUTE: @.agent-os/instructions/meta/pre-flight.md
+  EXECUTE: @~/.agent-os/instructions/meta/pre-flight.md (use mcp__filesystem__read_text_file)
 </pre_flight_check>
 
 
 <process_flow>
 
-<step number="1" name="task_understanding">
+<step number="1" name="task_selection">
 
-### Step 1: Task Understanding
+### Step 1: Task Selection and Scope Analysis
 
-Read and analyze the given parent task and all its sub-tasks from tasks.md to gain complete understanding of what needs to be built.
+Analyze the user's request to determine task scope and identify which specific tasks or sub-tasks to execute.
+
+<scope_analysis>
+  <default_behavior>
+    By default, complete one parent task and all its sub-tasks
+  </default_behavior>
+  
+  <scope_variations>
+    <more_work>
+      Pattern: "Complete tasks X and Y with all sub-tasks"
+      Action: Execute multiple specified parent tasks completely
+    </more_work>
+    
+    <less_work>
+      Pattern: "Just do task X.Y and X.Z"
+      Action: Execute only specified sub-tasks
+    </less_work>
+    
+    <specific_task>
+      Pattern: "Work on task X: [description]"
+      Action: Execute the specified parent task with all sub-tasks
+    </specific_task>
+    
+    <next_task>
+      Pattern: "execute next task"
+      Action: Find and execute the next uncompleted parent task
+    </next_task>
+  </scope_variations>
+</scope_analysis>
+
+<task_identification>
+  <explicit_requests>
+    IF user specifies exact task numbers or descriptions:
+      PARSE: Extract task identifiers from user request
+      VALIDATE: Ensure specified tasks exist in tasks.md
+      SCOPE: Execute only the specified tasks/sub-tasks
+  </explicit_requests>
+  
+  <next_task_logic>
+    IF user requests "next task" or no specific task:
+      SEARCH: Find first uncompleted parent task in tasks.md
+      SCOPE: Execute that parent task and all its sub-tasks
+      DEFAULT: If all tasks complete, inform user
+  </next_task_logic>
+</task_identification>
+
+<instructions>
+  ACTION: Parse user request to determine task scope
+  IDENTIFY: Specific tasks or use "next uncompleted" logic
+  VALIDATE: Ensure target tasks exist and are actionable
+  SCOPE: Determine exact sub-tasks to execute
+  INFORM: Clearly state what will be executed before proceeding
+</instructions>
+
+</step>
+
+<step number="2" name="task_understanding">
+
+### Step 2: Task Understanding
+
+Use filesystem tools to read and analyze the selected task(s) and their sub-tasks from tasks.md to gain complete understanding of what needs to be built.
 
 <task_analysis>
   <read_from_tasks_md>
-    - Parent task description
-    - All sub-task descriptions
+    - Selected parent task description(s)
+    - Relevant sub-task descriptions
     - Task dependencies
     - Expected outcomes
   </read_from_tasks_md>
 </task_analysis>
 
 <instructions>
-  ACTION: Read the specific parent task and all its sub-tasks
-  ANALYZE: Full scope of implementation required
+  ACTION: Use mcp__filesystem__read_text_file to read tasks.md and analyze selected task(s)
+  ANALYZE: Full scope of implementation required for selected items
   UNDERSTAND: Dependencies and expected deliverables
-  NOTE: Test requirements for each sub-task
+  NOTE: Test requirements for each selected sub-task
 </instructions>
 
 </step>
 
-<step number="2" name="technical_spec_review">
+<step number="3" name="technical_spec_review">
 
-### Step 2: Technical Specification Review
+### Step 3: Technical Specification Review
 
 Search and extract relevant sections from technical-spec.md to understand the technical implementation approach for this task.
 
@@ -68,11 +129,11 @@ Search and extract relevant sections from technical-spec.md to understand the te
 
 </step>
 
-<step number="3" subagent="context-fetcher" name="best_practices_review">
+<step number="4" subagent="context-fetcher" name="best_practices_review">
 
-### Step 3: Best Practices Review
+### Step 4: Best Practices Review
 
-Use the context-fetcher subagent to retrieve relevant sections from @.agent-os/standards/best-practices.md that apply to the current task's technology stack and feature type.
+Use the context-fetcher subagent to retrieve relevant sections from @~/.agent-os/standards/best-practices.md (using mcp__filesystem__read_text_file) that apply to the current task's technology stack and feature type.
 
 <selective_reading>
   <search_best_practices>
@@ -97,11 +158,11 @@ Use the context-fetcher subagent to retrieve relevant sections from @.agent-os/s
 
 </step>
 
-<step number="4" subagent="context-fetcher" name="code_style_review">
+<step number="5" subagent="context-fetcher" name="code_style_review">
 
-### Step 4: Code Style Review
+### Step 5: Code Style Review
 
-Use the context-fetcher subagent to retrieve relevant code style rules from @.agent-os/standards/code-style.md for the languages and file types being used in this task.
+Use the context-fetcher subagent to retrieve relevant code style rules from @~/.agent-os/standards/code-style.md (using mcp__filesystem__read_text_file) for the languages and file types being used in this task.
 
 <selective_reading>
   <search_code_style>
@@ -126,9 +187,9 @@ Use the context-fetcher subagent to retrieve relevant code style rules from @.ag
 
 </step>
 
-<step number="5" name="task_execution">
+<step number="6" name="task_execution">
 
-### Step 5: Task and Sub-task Execution
+### Step 6: Task and Sub-task Execution
 
 Execute the parent task and all sub-tasks in order using test-driven development (TDD) approach.
 
@@ -188,9 +249,9 @@ Execute the parent task and all sub-tasks in order using test-driven development
 
 </step>
 
-<step number="6" subagent="test-runner" name="task_test_verification">
+<step number="7" subagent="test-runner" name="task_test_verification">
 
-### Step 6: Task-Specific Test Verification
+### Step 7: Task-Specific Test Verification
 
 Use the test-runner subagent to run and verify only the tests specific to this parent task (not the full test suite) to ensure the feature is working correctly.
 
@@ -226,11 +287,11 @@ Use the test-runner subagent to run and verify only the tests specific to this p
 
 </step>
 
-<step number="7" name="task_status_updates">
+<step number="8" name="task_status_updates">
 
-### Step 7: Mark this task and sub-tasks complete
+### Step 8: Task Status Updates
 
-IMPORTANT: In the tasks.md file, mark this task and its sub-tasks complete by updating each task checkbox to [x].
+Update the tasks.md file immediately after completing each task to track progress.
 
 <update_format>
   <completed>- [x] Task description</completed>
@@ -256,8 +317,40 @@ IMPORTANT: In the tasks.md file, mark this task and its sub-tasks complete by up
 
 </step>
 
-</process_flow>
+<step number="9" name="task_completion_stop">
 
-<post_flight_check>
-  EXECUTE: @.agent-os/instructions/meta/post-flight.md
-</post_flight_check>
+### Step 9: Task Completion and Stop
+
+After completing the selected parent task and all its sub-tasks, STOP execution and await further user instructions.
+
+<completion_behavior>
+  <single_task_execution>
+    - Complete only the ONE parent task that was identified in Step 1
+    - Do NOT automatically continue to subsequent tasks
+    - Do NOT prepare or set up for additional tasks unless explicitly requested
+  </single_task_execution>
+  
+  <stop_conditions>
+    - When the selected parent task and all its sub-tasks are complete
+    - When all tests for the task are passing  
+    - When task status has been updated in tasks.md
+    - When TodoWrite has been marked complete
+  </stop_conditions>
+  
+  <completion_summary>
+    - Provide brief summary of what was completed
+    - Confirm task completion status
+    - STOP and await further user instructions
+  </completion_summary>
+</completion_behavior>
+
+<instructions>
+  ACTION: Summarize completed work for the single selected task
+  CONFIRM: Task completion status  
+  STOP: Do not continue to other tasks automatically
+  AWAIT: User instructions for next steps
+</instructions>
+
+</step>
+
+</process_flow>

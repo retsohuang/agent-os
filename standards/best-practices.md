@@ -21,7 +21,7 @@ ELSE:
 ### Optimize for Readability
 - Prioritize code clarity over micro-optimizations
 - Write self-documenting code with clear variable names
-- Add comments for "why" not "what"
+- Avoid comments unless absolutely necessary 
 
 ### DRY (Don't Repeat Yourself)
 - Extract repeated business logic to private methods
@@ -29,7 +29,6 @@ ELSE:
 - Create utility functions for common operations
 
 ### File Structure
-- Keep files focused on a single responsibility
 - Group related functionality together
 - Use consistent naming conventions
 </conditional-block>
@@ -55,3 +54,35 @@ When adding third-party dependencies:
   - Number of stars/downloads
   - Clear documentation
 </conditional-block>
+
+## Commit Message Guidelines
+
+Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) specification:
+
+```
+<type>[optional scope]: <description>
+
+[optional body]
+
+[optional footer(s)]
+```
+
+### Types
+
+- **feat**: A new feature
+- **fix**: A bug fix
+- **docs**: Documentation only changes
+- **style**: Changes that do not affect the meaning of the code
+- **refactor**: A code change that neither fixes a bug nor adds a feature
+- **perf**: A code change that improves performance
+- **test**: Adding missing tests or correcting existing tests
+- **chore**: Changes to the build process or auxiliary tools
+
+### Examples
+
+```
+feat: add gwt-create function for worktree management
+fix: handle existing directory in gwt-create
+docs: update README with installation instructions
+refactor: improve error handling in worktree functions
+```
