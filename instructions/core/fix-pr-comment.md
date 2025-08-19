@@ -60,18 +60,74 @@ Use Claude Code's native `/pr-comments` command to retrieve all comments from th
 
 </step>
 
-<step number="2" subagent="general-purpose" name="comment_analysis">
+<step number="2" name="initial_comment_analysis">
 
-### Step 2: Comment Analysis and Prioritization
+### Step 2: Initial Comment Analysis
 
-Use general-purpose subagent to analyze comments and determine which ones require fixes.
+Parse PR comments to identify which files and code sections need examination.
+
+<initial_parsing>
+  ACTION: Parse PR comments to extract:
+  - Files mentioned in comments
+  - Specific line numbers or code sections
+  - Type of issues reported (logic, style, performance, etc.)
+  - Suggested changes or fixes
+  
+  IDENTIFY: Which code areas need detailed review
+  PREPARE: List of files and sections to examine in Step 3
+</initial_parsing>
+
+</step>
+
+<step number="3" name="code_review_and_logic_analysis">
+
+### Step 3: Code Review and Logic Analysis
+
+Thoroughly examine the specific code mentioned in PR comments to understand current implementation.
+
+<detailed_code_review>
+  FOR each file/section mentioned in PR comments:
+    
+    STEP_3A: Read Current Implementation
+    ACTION: Use Read tool to examine the specific code
+    FOCUS: Understand the logic, purpose, and context
+    ANALYZE: How the current implementation works
+    TRACE: Step through the logic with different scenarios
+    
+    STEP_3B: Logic Verification
+    VERIFY: Boolean logic, conditional statements, loops
+    CHECK: Off-by-one errors, boundary conditions
+    ANALYZE: Operator precedence and logical combinations
+    TEST: Mental execution with edge cases
+    IDENTIFY: Potential issues or correct behavior
+    
+    STEP_3C: Comment Evaluation Against Code
+    MATCH: PR comment to specific code location
+    UNDERSTAND: What the comment is suggesting
+    EVALUATE: Whether suggestion addresses real issue
+    DETERMINE: If current code has logical errors
+    COMPARE: Current vs suggested implementation
+    
+  END FOR
+</detailed_code_review>
+
+</step>
+
+<step number="4" subagent="general-purpose" name="comment_analysis_and_prioritization">
+
+### Step 4: Comment Analysis and Prioritization (After Code Review)
+
+Use general-purpose subagent to analyze comments with full understanding of the code.
 
 <analysis_request>
   ACTION: Use general-purpose subagent
-  REQUEST: "Analyze PR comments for actionable feedback:
+  REQUEST: "Analyze PR comments for actionable feedback AFTER having thoroughly reviewed the actual code implementation:
 
   **Input Data:**
   - All PR comments from /pr-comments command
+  - DETAILED understanding of current code implementation (from Step 3)
+  - Specific analysis of logical correctness for each commented section
+  - Edge cases and scenarios tested mentally
   - Current codebase context and recent changes
   - Repository structure and coding standards
 
@@ -92,16 +148,22 @@ Use general-purpose subagent to analyze comments and determine which ones requir
     - Medium: Moderate complexity, some risk
     - Complex: Significant changes, high risk
 
-  4. **Evaluate Current Implementation:**
+  4. **Critical Logic Evaluation:**
+    - TRACE THROUGH the current logic step by step
+    - IDENTIFY all possible execution paths and outcomes
+    - TEST the logic with different input scenarios mentally
+    - COMPARE current behavior with suggested changes
+    - DETERMINE if suggestions actually fix real issues or introduce problems
+    - VERIFY logical correctness of both current and suggested approaches
     - Is current code best-in-class?
     - Would suggested changes improve quality?
     - Are there better alternatives to suggested fixes?
 
   **Output Requirements:**
-  - CLEAR_FIXES: Comments that should definitely be fixed (auto-fix)
-  - QUESTIONABLE_FIXES: Comments where current implementation may be better
+  - CLEAR_FIXES: Comments that identify genuine logical errors or clear improvements
+  - QUESTIONABLE_FIXES: Comments where current implementation may be better or equivalent
   - Implementation difficulty assessment for each category
-  - Clear reasoning for questionable classifications
+  - Clear reasoning based on actual code analysis
   - Recommendation: AUTO_FIX or CONFIRM_NEEDED for each comment"
 
   WAIT: For detailed comment analysis
@@ -126,17 +188,41 @@ Use general-purpose subagent to analyze comments and determine which ones requir
   </fix_recommendation>
 </analysis_criteria>
 
+<critical_analysis_requirements>
+  MANDATORY BEFORE CLASSIFICATION:
+  
+  LOGIC_VERIFICATION_EXAMPLES:
+  - For boolean expressions: Test with actual values (e.g., if condition is "!A && B", test with A=true,B=true; A=false,B=true; etc.)
+  - For loops: Check start/end conditions, increment/decrement logic
+  - For array/string operations: Verify bounds checking
+  - For mathematical operations: Check for overflow, division by zero
+  
+  COMMENT_EVALUATION_CRITERIA:
+  - Does the comment identify a REAL logical error? (Provide proof with examples)
+  - Does the comment suggest fixing something that isn't broken?
+  - Would the suggested change introduce new bugs or break edge cases?
+  - Is the current implementation intentionally designed this way for a reason?
+  
+  NEVER SKIP:
+  - Reading and understanding the actual code before making recommendations
+  - Testing logical expressions with concrete examples
+  - Considering edge cases and boundary conditions
+  - Verifying that suggested changes actually improve the code
+</critical_analysis_requirements>
+
 <instructions>
-  ACTION: Use general-purpose subagent for thorough comment analysis
-  EVALUATE: Each comment for actionability and value
-  PRIORITIZE: Comments by importance and impact
-  ASSESS: Current implementation quality vs suggested changes
-  PREPARE: Detailed recommendations for user review
+  ACTION: FIRST complete thorough code review and logic analysis (Steps 2-3)
+  THEN use general-purpose subagent for comment analysis (Step 4)
+  EVALUATE: Each comment against actual code behavior with proof
+  PRIORITIZE: Comments by logical correctness and impact
+  ASSESS: Current implementation vs suggested changes with concrete examples
+  PREPARE: Detailed recommendations with logical reasoning and evidence
+  NEVER: Make assumptions about code without reading it first
 </instructions>
 
 </step>
 
-<step number="3" name="implement_clear_fixes">
+<step number="5" name="implement_clear_fixes">
 
 ### Step 3: Implement Clear Improvements
 
@@ -197,7 +283,7 @@ END FOR
 
 </step>
 
-<step number="4" name="questionable_fixes_confirmation">
+<step number="6" name="questionable_fixes_confirmation">
 
 ### Step 4: Questionable Fixes Confirmation
 
@@ -327,7 +413,7 @@ DESCRIPTIVE_MESSAGES: Clear explanation of what was changed
 
 </step>
 
-<step number="5" name="completion_summary">
+<step number="7" name="completion_summary">
 
 ### Step 5: Final Summary
 
