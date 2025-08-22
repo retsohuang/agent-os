@@ -124,7 +124,7 @@ install_from_github() {
 
     # Core instructions
     echo "  📂 Core instructions:"
-    for file in plan-product create-spec create-tasks execute-tasks execute-task analyze-product; do
+    for file in plan-product complete-tasks create-spec create-tasks execute-tasks execute-task analyze-product; do
         download_file "${BASE_URL}/instructions/core/${file}.md" \
             "$target_dir/instructions/core/${file}.md" \
             "$overwrite_inst" \
@@ -134,10 +134,12 @@ install_from_github() {
     # Meta instructions
     echo ""
     echo "  📂 Meta instructions:"
-    download_file "${BASE_URL}/instructions/meta/pre-flight.md" \
-        "$target_dir/instructions/meta/pre-flight.md" \
-        "$overwrite_inst" \
-        "instructions/meta/pre-flight.md"
+    for file in pre-flight post-flight; do
+        download_file "${BASE_URL}/instructions/meta/${file}.md" \
+            "$target_dir/instructions/meta/${file}.md" \
+            "$overwrite_inst" \
+            "instructions/meta/${file}.md"
+    done
 
     # Download standards
     echo ""
