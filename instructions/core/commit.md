@@ -3,7 +3,7 @@ description: Create a git commit for completed work
 alwaysApply: false
 version: 1.0
 encoding: UTF-8
-allowed-tools: mcp__git__git_status, mcp__git__git_diff_staged, mcp__git__git_diff_unstaged, mcp__git__git_add, mcp__git__git_commit, mcp__filesystem__read_text_file, mcp__filesystem__list_directory, Task, Bash, Glob, Grep
+allowed-tools: mcp__git__git_status, mcp__git__git_diff_staged, mcp__git__git_diff_unstaged, mcp__git__git_commit, mcp__filesystem__read_text_file, mcp__filesystem__list_directory, Task, Bash, Glob, Grep
 ---
 
 # Commit Command
