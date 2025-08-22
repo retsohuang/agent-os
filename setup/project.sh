@@ -197,7 +197,7 @@ if [ "$CLAUDE_CODE" = true ]; then
     if [ "$IS_FROM_BASE" = true ]; then
         # Copy from base installation
         echo "  📂 Commands:"
-        for cmd in plan-product create-spec create-tasks execute-tasks analyze-product; do
+        for cmd in plan-product create-spec create-tasks execute-tasks analyze-product commit fix-pr-comment create-pr; do
             if [ -f "$BASE_AGENT_OS/commands/${cmd}.md" ]; then
                 copy_file "$BASE_AGENT_OS/commands/${cmd}.md" "./.claude/commands/${cmd}.md" "false" "commands/${cmd}.md"
             else
@@ -219,7 +219,7 @@ if [ "$CLAUDE_CODE" = true ]; then
         echo "  Downloading Claude Code files from GitHub..."
         echo ""
         echo "  📂 Commands:"
-        for cmd in plan-product create-spec create-tasks execute-tasks analyze-product; do
+        for cmd in plan-product create-spec create-tasks execute-tasks analyze-product commit fix-pr-comment create-pr; do
             download_file "${BASE_URL}/commands/${cmd}.md" \
                 "./.claude/commands/${cmd}.md" \
                 "false" \
@@ -247,7 +247,7 @@ if [ "$CURSOR" = true ]; then
 
     if [ "$IS_FROM_BASE" = true ]; then
         # Convert commands from base installation to Cursor rules
-        for cmd in plan-product create-spec create-tasks execute-tasks analyze-product; do
+        for cmd in plan-product create-spec create-tasks execute-tasks analyze-product commit fix-pr-comment create-pr; do
             if [ -f "$BASE_AGENT_OS/commands/${cmd}.md" ]; then
                 convert_to_cursor_rule "$BASE_AGENT_OS/commands/${cmd}.md" "./.cursor/rules/${cmd}.mdc"
             else
@@ -257,7 +257,7 @@ if [ "$CURSOR" = true ]; then
     else
         # Download from GitHub and convert when using --no-base
         echo "  Downloading and converting from GitHub..."
-        for cmd in plan-product create-spec create-tasks execute-tasks analyze-product; do
+        for cmd in plan-product create-spec create-tasks execute-tasks analyze-product commit fix-pr-comment create-pr; do
             TEMP_FILE="/tmp/${cmd}.md"
             curl -s -o "$TEMP_FILE" "${BASE_URL}/commands/${cmd}.md"
             if [ -f "$TEMP_FILE" ]; then
@@ -297,6 +297,9 @@ if [ "$CLAUDE_CODE" = true ]; then
     echo "  /analyze-product - Set up the mission and roadmap for an existing product"
     echo "  /create-spec     - Create a spec for a new feature"
     echo "  /execute-tasks   - Build and ship code for a new feature"
+    echo "  /commit          - Create a git commit for completed work"
+    echo "  /fix-pr-comment  - Fix GitHub pull request comments"
+    echo "  /create-pr       - Create a pull request for completed feature"
     echo ""
 fi
 
@@ -306,6 +309,9 @@ if [ "$CURSOR" = true ]; then
     echo "  @analyze-product - Set up the mission and roadmap for an existing product"
     echo "  @create-spec     - Create a spec for a new feature"
     echo "  @execute-tasks   - Build and ship code for a new feature"
+    echo "  @commit          - Create a git commit for completed work"
+    echo "  @fix-pr-comment  - Fix GitHub pull request comments"
+    echo "  @create-pr       - Create a pull request for completed feature"
     echo ""
 fi
 
