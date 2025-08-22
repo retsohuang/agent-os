@@ -3,7 +3,7 @@ description: Fix GitHub pull request comments by analyzing feedback and implemen
 alwaysApply: false
 version: 1.0
 encoding: UTF-8
-allowed-tools: mcp__filesystem__read_text_file, mcp__filesystem__list_directory, mcp__filesystem__search_files, Task, Bash, Glob, Grep, Read, Edit, MultiEdit, Write, mcp__git__git_status, mcp__git__git_commit
+allowed-tools: mcp__filesystem__read_text_file, mcp__filesystem__list_directory, mcp__filesystem__search_files, Task, Bash, Glob, Grep, Read, Edit, MultiEdit, Write, mcp__git__git_status
 ---
 
 # Fix PR Comment Command
