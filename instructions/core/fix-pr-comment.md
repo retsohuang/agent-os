@@ -113,14 +113,14 @@ Thoroughly examine the specific code mentioned in PR comments to understand curr
 
 </step>
 
-<step number="4" subagent="general-purpose" name="comment_analysis_and_prioritization">
+<step number="4" subagent="project-manager" name="comment_analysis_and_prioritization">
 
 ### Step 4: Comment Analysis and Prioritization (After Code Review)
 
-Use general-purpose subagent to analyze comments with full understanding of the code.
+Use project-manager subagent to analyze comments with full understanding of the code.
 
 <analysis_request>
-  ACTION: Use general-purpose subagent
+  ACTION: Use project-manager subagent
   REQUEST: "Analyze PR comments for actionable feedback AFTER having thoroughly reviewed the actual code implementation:
 
   **Input Data:**
@@ -212,7 +212,7 @@ Use general-purpose subagent to analyze comments with full understanding of the 
 
 <instructions>
   ACTION: FIRST complete thorough code review and logic analysis (Steps 2-3)
-  THEN use general-purpose subagent for comment analysis (Step 4)
+  THEN use project-manager subagent for comment analysis (Step 4)
   EVALUATE: Each comment against actual code behavior with proof
   PRIORITIZE: Comments by logical correctness and impact
   ASSESS: Current implementation vs suggested changes with concrete examples
