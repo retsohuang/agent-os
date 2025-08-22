@@ -3,7 +3,7 @@ description: Create a git commit for completed work
 alwaysApply: false
 version: 1.0
 encoding: UTF-8
-allowed-tools: mcp__git__git_status, mcp__git__git_diff_staged, mcp__git__git_diff_unstaged, mcp__git__git_commit, mcp__git__git_add, mcp__filesystem__read_text_file, mcp__filesystem__list_directory, Task, Bash, Glob, Grep
+allowed-tools: mcp__git__git_status, mcp__git__git_diff_staged, mcp__git__git_diff_unstaged, mcp__git__git_commit, mcp__filesystem__read_text_file, mcp__filesystem__list_directory, Task, Bash, Glob, Grep
 ---
 
 # Commit Command
@@ -53,7 +53,7 @@ USE: Only staged changes for commit
 NOTE: Unstaged changes will remain in working directory
 CONFIRM: Commit will include staged changes only
 ELSE IF unstaged changes exist:
-USE: mcp__git__git_add to stage all unstaged changes
+USE: Bash(git add*) to stage all unstaged changes
 TARGET: All modified, added, and deleted files
 CONFIRM: All modifications will be included in commit
 ELSE:
@@ -73,7 +73,7 @@ ERROR: Nothing to commit, working tree clean
 STEP_1: Use mcp__git__git_status to get repository state
 STEP_2: Use mcp__git__git_diff_staged to analyze staged changes
 STEP_3: Use mcp__git__git_diff_unstaged to analyze unstaged changes
-STEP_4: Use mcp__git__git_add if staging is needed
+STEP_4: Use Bash(git add*) if staging is needed
 FALLBACK: Use Bash tool if MCP tools fail
 </mcp_tools_sequence>
 
@@ -81,7 +81,7 @@ FALLBACK: Use Bash tool if MCP tools fail
   ACTION: Use MCP git tools to check status and analyze changes
   VALIDATE: Changes are ready for commit using mcp__git__git_status
   ANALYZE: Both staged and unstaged changes with diff tools
-  STAGE: Unstaged changes using mcp__git__git_add if needed
+  STAGE: Unstaged changes using Bash(git add*) if needed
   ASSESS: Scope and type of changes for commit message generation
 </instructions>
 
@@ -260,7 +260,7 @@ REQUEST: "Create git commit with contextual message:
 </commit_message_guidelines>
 
 <tools_sequence>
-STEP_1: Use mcp__git__git_add if additional staging needed
+STEP_1: Use Bash(git add*) if additional staging needed
 STEP_2: Use Bash tool with git commit HEREDOC format
 STEP_3: Capture commit hash from successful commit
 FALLBACK: Use git-workflow subagent if Bash fails
