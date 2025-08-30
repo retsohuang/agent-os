@@ -22,10 +22,10 @@ Analyze GitHub pull request comments using `/pr-comments` command, implement cle
 
 ### Step 1: Fetch PR Comments
 
-Use Claude Code's native `/pr-comments` command to retrieve all comments from the current pull request.
+Use Claude Code's native `/pr-comments` slash command (NOT a bash command) to retrieve all comments from the current pull request.
 
 <pr_comments_execution>
-  ACTION: Execute `/pr-comments` command
+  ACTION: Execute `/pr-comments` slash command (NOT bash)
   PURPOSE: Retrieve all comments and feedback from the pull request
   CAPTURE: Comment content, authors, timestamps, and context
   PROCESS: Parse comments for actionable feedback
@@ -52,7 +52,7 @@ Use Claude Code's native `/pr-comments` command to retrieve all comments from th
 </comment_types>
 
 <instructions>
-  ACTION: Run `/pr-comments` to fetch all PR feedback
+  ACTION: Run `/pr-comments` slash command (NOT bash) to fetch all PR feedback
   PARSE: Comments for actionable vs non-actionable feedback
   CATEGORIZE: Types of changes needed
   PREPARE: List of potential fixes for analysis
@@ -124,7 +124,7 @@ Use project-manager subagent to analyze comments with full understanding of the 
   REQUEST: "Analyze PR comments for actionable feedback AFTER having thoroughly reviewed the actual code implementation:
 
   **Input Data:**
-  - All PR comments from /pr-comments command
+  - All PR comments from /pr-comments slash command
   - DETAILED understanding of current code implementation (from Step 3)
   - Specific analysis of logical correctness for each commented section
   - Edge cases and scenarios tested mentally
@@ -496,7 +496,7 @@ Provide comprehensive summary of all auto-fixes and questionable fixes implement
 
 <error_scenarios>
 <pr_comments_errors>
-- `/pr-comments` command fails or not available
+- `/pr-comments` slash command fails or not available
 - No pull request context available
 - Permission issues accessing PR comments
 - API rate limiting or network issues
@@ -533,7 +533,7 @@ Provide comprehensive summary of all auto-fixes and questionable fixes implement
 **Need Help?** 
 - Check if you're in a repository with an active PR
 - Verify GitHub access permissions
-- Try running `/pr-comments` manually first
+- Try running `/pr-comments` slash command manually first
 - Ensure you're on the correct branch
 </graceful_handling>
 </error_responses>
