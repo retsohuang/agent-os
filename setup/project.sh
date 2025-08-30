@@ -9,7 +9,7 @@ set -e  # Exit on error
 NO_BASE=false
 OVERWRITE_INSTRUCTIONS=false
 OVERWRITE_STANDARDS=false
-OVERWRITE_COMMANDS=false
+CLAUDE_CODE_FORCE=false
 CLAUDE_CODE=false
 CURSOR=false
 PROJECT_TYPE=""
@@ -29,8 +29,8 @@ while [[ $# -gt 0 ]]; do
             OVERWRITE_STANDARDS=true
             shift
             ;;
-        --overwrite-commands)
-            OVERWRITE_COMMANDS=true
+        --claude-code-force)
+            CLAUDE_CODE_FORCE=true
             shift
             ;;
         --claude-code|--claude|--claude_code)
@@ -52,7 +52,7 @@ while [[ $# -gt 0 ]]; do
             echo "  --no-base                   Install from GitHub (not from a base Agent OSinstallation on your system)"
             echo "  --overwrite-instructions    Overwrite existing instruction files"
             echo "  --overwrite-standards       Overwrite existing standards files"
-            echo "  --overwrite-commands        Overwrite existing Claude Code command files"
+            echo "  --claude-code-force         Force overwrite existing Claude Code files"
             echo "  --claude-code               Add Claude Code support"
             echo "  --cursor                    Add Cursor support"
             echo "  --project-type=TYPE         Use specific project type for installation"
@@ -240,7 +240,7 @@ if [ "$CLAUDE_CODE" = true ]; then
         echo "  📂 Commands:"
         for cmd in plan-product create-spec create-tasks execute-tasks analyze-product commit fix-pr-comment create-pr; do
             if [ -f "$BASE_AGENT_OS/commands/${cmd}.md" ]; then
-                copy_file "$BASE_AGENT_OS/commands/${cmd}.md" "./.claude/commands/${cmd}.md" "$OVERWRITE_COMMANDS" "commands/${cmd}.md"
+                copy_file "$BASE_AGENT_OS/commands/${cmd}.md" "./.claude/commands/${cmd}.md" "$CLAUDE_CODE_FORCE" "commands/${cmd}.md"
             else
                 echo "  ⚠️  Warning: ${cmd}.md not found in base installation"
             fi
@@ -250,7 +250,7 @@ if [ "$CLAUDE_CODE" = true ]; then
         echo "  📂 Agents:"
         for agent in context-fetcher date-checker file-creator git-workflow project-manager test-runner; do
             if [ -f "$BASE_AGENT_OS/claude-code/agents/${agent}.md" ]; then
-                copy_file "$BASE_AGENT_OS/claude-code/agents/${agent}.md" "./.claude/agents/${agent}.md" "false" "agents/${agent}.md"
+                copy_file "$BASE_AGENT_OS/claude-code/agents/${agent}.md" "./.claude/agents/${agent}.md" "$CLAUDE_CODE_FORCE" "agents/${agent}.md"
             else
                 echo "  ⚠️  Warning: ${agent}.md not found in base installation"
             fi
@@ -263,7 +263,7 @@ if [ "$CLAUDE_CODE" = true ]; then
         for cmd in plan-product create-spec create-tasks execute-tasks analyze-product commit fix-pr-comment create-pr; do
             download_file "${BASE_URL}/commands/${cmd}.md" \
                 "./.claude/commands/${cmd}.md" \
-                "$OVERWRITE_COMMANDS" \
+                "$CLAUDE_CODE_FORCE" \
                 "commands/${cmd}.md"
         done
 
@@ -272,7 +272,7 @@ if [ "$CLAUDE_CODE" = true ]; then
         for agent in context-fetcher date-checker file-creator git-workflow project-manager test-runner; do
             download_file "${BASE_URL}/claude-code/agents/${agent}.md" \
                 "./.claude/agents/${agent}.md" \
-                "false" \
+                "$CLAUDE_CODE_FORCE" \
                 "agents/${agent}.md"
         done
     fi
