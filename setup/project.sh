@@ -175,6 +175,25 @@ if [ "$IS_FROM_BASE" = true ]; then
     echo ""
     echo "📥 Installing standards files to $INSTALL_DIR/standards/"
     copy_directory "$STANDARDS_SOURCE" "$INSTALL_DIR/standards" "$OVERWRITE_STANDARDS"
+
+    echo ""
+    echo "📥 Installing configuration files to $INSTALL_DIR/config/"
+    if [ -d "$BASE_AGENT_OS/config" ]; then
+        copy_directory "$BASE_AGENT_OS/config" "$INSTALL_DIR/config" "false"
+    else
+        echo "  ⚠️  Config directory not found in base installation, creating default config"
+        mkdir -p "$INSTALL_DIR/config"
+        # Create basic README
+        cat > "$INSTALL_DIR/config/README.md" << 'EOF'
+# Agent OS Configuration
+
+Configure actions that run after individual task completion.
+
+Edit `post-task-actions.yml` to customize post-task behavior.
+
+See the documentation for setup instructions.
+EOF
+    fi
 else
     # Running directly from GitHub - download from GitHub
     if [ -z "$PROJECT_TYPE" ]; then
@@ -185,6 +204,22 @@ else
 
     # Install instructions and standards from GitHub (no commands folder needed)
     install_from_github "$INSTALL_DIR" "$OVERWRITE_INSTRUCTIONS" "$OVERWRITE_STANDARDS" false
+
+    echo ""
+    echo "📥 Installing configuration files to $INSTALL_DIR/config/"
+    mkdir -p "$INSTALL_DIR/config"
+    
+    # Download config files from GitHub
+    echo "  📂 Configuration files:"
+    download_file "${BASE_URL}/config/post-task-actions.yml" \
+        "$INSTALL_DIR/config/post-task-actions.yml" \
+        "false" \
+        "config/post-task-actions.yml"
+    
+    download_file "${BASE_URL}/config/README.md" \
+        "$INSTALL_DIR/config/README.md" \
+        "false" \
+        "config/README.md"
 fi
 
 # Handle Claude Code installation for project
@@ -275,6 +310,7 @@ echo ""
 echo "📍 Project-level files installed to:"
 echo "   .agent-os/instructions/    - Agent OS instructions"
 echo "   .agent-os/standards/       - Development standards"
+echo "   .agent-os/config/          - Configuration files"
 
 if [ "$CLAUDE_CODE" = true ]; then
     echo "   .claude/commands/          - Claude Code commands"
