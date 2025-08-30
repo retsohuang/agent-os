@@ -102,9 +102,8 @@ Use task information in actions:
 
 ## Configuration Priority
 
-1. **Spec-specific**: `[spec-folder]/post-task-actions.yml` (highest)
-2. **Global**: `.agent-os/config/post-task-actions.yml`
-3. **Default**: Minimal actions if no config found
+1. **Global**: `.agent-os/config/post-task-actions.yml`
+2. **Default**: Minimal actions if no config found
 
 ## Getting Started
 
