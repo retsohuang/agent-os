@@ -64,8 +64,13 @@ copy_directory() {
 
     mkdir -p "$dest"
 
-    # Copy all files and subdirectories
-    find "$source" -type f | while read -r file; do
+    # Copy all files and subdirectories, excluding system files
+    find "$source" -type f \
+        -not -name ".DS_Store" \
+        -not -name "Thumbs.db" \
+        -not -name "desktop.ini" \
+        -not -path "*/.*" \
+        | while read -r file; do
         relative_path="${file#$source/}"
         dest_file="$dest/$relative_path"
         dest_dir=$(dirname "$dest_file")
