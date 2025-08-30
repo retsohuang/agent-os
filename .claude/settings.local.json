@@ -2,7 +2,8 @@
   "permissions": {
     "allow": [
       "mcp__filesystem__read_text_file",
-      "mcp__git__git_diff_staged"
+      "mcp__git__git_diff_staged",
+      "Bash(git commit:*)"
     ],
     "deny": [],
     "ask": []
