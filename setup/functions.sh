@@ -69,7 +69,7 @@ copy_directory() {
         -not -name ".DS_Store" \
         -not -name "Thumbs.db" \
         -not -name "desktop.ini" \
-        -not -path "*/.*" \
+        -not -name ".gitkeep" \
         | while read -r file; do
         relative_path="${file#$source/}"
         dest_file="$dest/$relative_path"
