@@ -76,16 +76,31 @@ Use the context-fetcher subagent to gather minimal context for task understandin
 
 ### Step 3: Git Branch Management
 
-Use the git-workflow subagent to manage git branches to ensure proper isolation by creating or switching to the appropriate branch for the spec.
+Use the git-workflow subagent to manage git branches to ensure proper isolation by checking current branch compatibility and only creating new branches when necessary.
 
 <instructions>
   ACTION: Use git-workflow subagent
   REQUEST: "Check and manage branch for spec: [SPEC_FOLDER]
-            - Create branch if needed
-            - Switch to correct branch
+            - Check if current branch is already appropriate for this spec
+            - Only create/switch branch if current branch is main or unrelated to spec
+            - If current branch matches spec name pattern, stay on current branch
             - Handle any uncommitted changes"
   WAIT: For branch setup completion
 </instructions>
+
+<branch_logic>
+  <current_branch_check>
+    - If on main: create new spec branch
+    - If current branch name matches spec folder (minus date): stay on current
+    - If current branch is unrelated to spec: create new spec branch
+    - If current branch is spec-related but different spec: create new spec branch
+  </current_branch_check>
+  <spec_matching>
+    - Compare current branch name with spec folder name
+    - Ignore date prefixes in spec folder names
+    - Consider variations like kebab-case vs snake_case
+  </spec_matching>
+</branch_logic>
 
 <branch_naming>
   <source>spec folder name</source>
