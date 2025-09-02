@@ -10,12 +10,9 @@ encoding: UTF-8
 
 ## Overview
 
-Execute tasks for a given spec following three distinct phases:
+Execute tasks for a given spec following two distinct phases:
 1. Pre-execution setup (Steps 1-3)
 2. Task execution loop (Step 4)
-3. Post-execution tasks (Step 5)
-
-**IMPORTANT**: All three phases MUST be completed. Do not stop after phase 2.
 
 <pre_flight_check>
   EXECUTE: @.agent-os/instructions/meta/pre-flight.md
@@ -165,35 +162,13 @@ Execute all assigned parent tasks and their subtasks using @.agent-os/instructio
   UPDATE: Task status after each completion
   VERIFY: All tasks complete before proceeding
   HANDLE: Blocking issues appropriately
-  **IMPORTANT**: When all tasks complete, proceed to Step 5
 </instructions>
 
 </step>
 
-## Phase 3: Post-Execution Tasks
+## Completion
 
-<step number="5" name="post_execution_tasks">
-
-### Step 5: Run the task completion steps
-
-**CRITICAL**: This step MUST be executed after all tasks are implemented. Do not end the process without completing this phase.
-
-After all tasks in tasks.md have been implemented, use @.agent-os/instructions/core/post-execution-tasks.md to run our series of steps we always run when finishing and delivering a new feature.
-
-<instructions>
-  LOAD: @.agent-os/instructions/core/post-execution-tasks.md once
-  ACTION: execute all steps in the post-execution-tasks.md process_flow.
-  **IMPORTANT**: This includes:
-    - Running full test suite
-    - Git workflow (commit, push, PR)
-    - Verifying task completion
-    - Updating roadmap (if applicable)
-    - Creating recap document
-    - Generating completion summary
-    - Playing notification sound
-</instructions>
-
-</step>
+After all assigned tasks are completed, the execution phase is complete. To run post-execution tasks (testing, git workflow, documentation), use the `/post-execution-tasks` command separately.
 
 </process_flow>
 
